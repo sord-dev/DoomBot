@@ -26,7 +26,8 @@ class CommandHandler {
       () => import('../commands/unlink'),
       () => import('../commands/stats'),
       () => import('../commands/recent'),
-      () => import('../commands/watch')
+      () => import('../commands/watch'),
+      () => import('../commands/improve')
     ];
 
     for (const loadModule of commandModules) {
