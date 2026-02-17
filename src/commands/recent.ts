@@ -1,14 +1,15 @@
 import { ChatInputCommandInteraction, SlashCommandBuilder, EmbedBuilder } from 'discord.js';
 import { Command } from '../handlers/commandHandler';
 import { database } from '../database/database';
-import { validateAndNormalizeSteamId } from '../utils/steam';
+import { validateAndNormalizeSteamId } from '../utils/steam'; 
 import { leetifyApi, LeetifyMatchSummary } from '../services/leetify';
 import { logger } from '../utils/logger';
+import { formatAsPercentage } from '../utils/dataFormatter';
 
 const command: Command = {
   data: new SlashCommandBuilder()
     .setName('recent')
-    .setDescription('Show recent CS2 match performance')
+    .setDescription('Show recent CS2 match history with performance analysis')  
     .addStringOption(option =>
       option
         .setName('player')
@@ -136,7 +137,9 @@ async function createRecentMatchesEmbed(matches: LeetifyMatchSummary[], steamId:
   // Calculate summary stats
   const totalMatches = matches.length;
   const wins = matches.filter(m => m.matchResult === 'win').length;
-  const winRate = Math.round((wins / totalMatches) * 100);
+  const winRateDecimal = wins / totalMatches;
+  const winRate = Math.round(winRateDecimal * 100); // For color calculation
+  const winRateFormatted = formatAsPercentage(winRateDecimal, 0);
   
   const avgRating = matches.reduce((sum, m) => sum + m.rating, 0) / totalMatches;
   const avgKD = matches.reduce((sum, m) => sum + (m.kills / Math.max(m.deaths, 1)), 0) / totalMatches;
@@ -156,7 +159,7 @@ async function createRecentMatchesEmbed(matches: LeetifyMatchSummary[], steamId:
       {
         name: '📈 **Recent Form Summary**',
         value: 
-          `**Win Rate:** ${winRate}% (${wins}W/${totalMatches - wins}L)\n` +
+          `**Win Rate:** ${winRateFormatted} (${wins}W/${totalMatches - wins}L)\n` +
           `**Avg Rating:** ${avgRating.toFixed(2)}\n` +
           `**Avg K/D:** ${avgKD.toFixed(2)}\n` +
           `**Avg ADR:** ${avgADR.toFixed(1)}`,

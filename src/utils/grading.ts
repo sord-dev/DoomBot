@@ -3,6 +3,8 @@
  * Provides letter grades (S, A, B, C, D, F) for various CS2 performance metrics
  */
 
+import { formatAsPercentage } from './dataFormatter';
+
 export interface StatGrade {
   grade: 'S' | 'A' | 'B' | 'C' | 'D' | 'F';
   color: number; // Discord embed color
@@ -217,10 +219,11 @@ export function gradeDamagePerRound(adr: number): GradedStat {
  * Grade player's headshot percentage
  */
 export function gradeHeadshotPercentage(hsPercentage: number): GradedStat {
-  const grade = calculateGrade(hsPercentage, STAT_THRESHOLDS.headshotPercentage);
+  const percentage = hsPercentage * 100; // Convert from decimal to percentage for grading thresholds
+  const grade = calculateGrade(percentage, STAT_THRESHOLDS.headshotPercentage);
   return {
     value: hsPercentage,
-    formattedValue: formatValue(hsPercentage, 'percentage'),
+    formattedValue: formatAsPercentage(hsPercentage, 1),
     grade
   };
 }
@@ -229,11 +232,11 @@ export function gradeHeadshotPercentage(hsPercentage: number): GradedStat {
  * Grade player's win rate
  */
 export function gradeWinRate(winRate: number): GradedStat {
-  const percentage = winRate * 100; // Convert from decimal to percentage
+  const percentage = winRate * 100; // Convert from decimal to percentage for grading thresholds
   const grade = calculateGrade(percentage, STAT_THRESHOLDS.winRate);
   return {
     value: winRate,
-    formattedValue: formatValue(percentage, 'percentage'),
+    formattedValue: formatAsPercentage(winRate, 1),
     grade
   };
 }
@@ -254,11 +257,11 @@ export function gradeAverageRating(rating: number): GradedStat {
  * Grade player's first kill rate
  */
 export function gradeFirstKillRate(firstKillRate: number): GradedStat {
-  const percentage = firstKillRate * 100;
+  const percentage = firstKillRate * 100; // Convert from decimal to percentage for grading thresholds
   const grade = calculateGrade(percentage, STAT_THRESHOLDS.firstKillRate);
   return {
     value: firstKillRate,
-    formattedValue: formatValue(percentage, 'percentage'),
+    formattedValue: formatAsPercentage(firstKillRate, 1),
     grade
   };
 }
@@ -267,11 +270,11 @@ export function gradeFirstKillRate(firstKillRate: number): GradedStat {
  * Grade player's clutch success rate
  */
 export function gradeClutchRate(clutchRate: number): GradedStat {
-  const percentage = clutchRate * 100;
+  const percentage = clutchRate * 100; // Convert from decimal to percentage for grading thresholds
   const grade = calculateGrade(percentage, STAT_THRESHOLDS.clutchRate);
   return {
     value: clutchRate,
-    formattedValue: formatValue(percentage, 'percentage'),
+    formattedValue: formatAsPercentage(clutchRate, 1),
     grade
   };
 }
@@ -280,11 +283,11 @@ export function gradeClutchRate(clutchRate: number): GradedStat {
  * Grade player's multi-kill rate
  */
 export function gradeMultiKillRate(multiKillRate: number): GradedStat {
-  const percentage = multiKillRate * 100;
+  const percentage = multiKillRate * 100; // Convert from decimal to percentage for grading thresholds
   const grade = calculateGrade(percentage, STAT_THRESHOLDS.multiKillRate);
   return {
     value: multiKillRate,
-    formattedValue: formatValue(percentage, 'percentage'),
+    formattedValue: formatAsPercentage(multiKillRate, 1),
     grade
   };
 }
@@ -305,11 +308,11 @@ export function gradeUtilityDamage(utilityDamage: number): GradedStat {
  * Grade player's smoke success rate
  */
 export function gradeSmokeSuccessRate(smokeSuccessRate: number): GradedStat {
-  const percentage = smokeSuccessRate * 100;
+  const percentage = smokeSuccessRate * 100; // Convert from decimal to percentage for grading thresholds
   const grade = calculateGrade(percentage, STAT_THRESHOLDS.smokeSuccessRate);
   return {
     value: smokeSuccessRate,
-    formattedValue: formatValue(percentage, 'percentage'),
+    formattedValue: formatAsPercentage(smokeSuccessRate, 1),
     grade
   };
 }

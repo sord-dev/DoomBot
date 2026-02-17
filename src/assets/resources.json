@@ -1,0 +1,262 @@
+{
+    "aim_accuracy": [
+        {
+            "type": "website",
+            "link": "https://www.warmupserver.net/servers.php",
+            "description": "Warmup Server - Warmup with pro and semi-pro players."
+        }
+    ],
+    "crosshair_placement": [
+        {
+            "type": "website",
+            "link": "https://www.warmupserver.net/servers.php",
+            "description": "Warmup Server - Warmup with pro and semi-pro players."
+        }
+    ],
+    "counter_strafing": [
+        {
+            "type": "website",
+            "link": "https://steamcommunity.com/groups/FemboyKZ/discussions/0/4629231101531928477",
+            "description": "All FKZ Servers and their IPs for VNL KZ training. (Intermediate/Advanced Movement)"
+        }
+    ],
+    "spray_control": [
+        {
+            "type": "website",
+            "link": "https://steamcommunity.com/sharedfiles/filedetails/?id=3100869952",
+            "description": "Recoil Master - Spray Training (CS2)"
+        }
+    ],
+    "reaction_time": [
+        {
+            "type": "website",
+            "link": "https://www.humanbenchmark.com/tests/reactiontime",
+            "description": "Human Benchmark - Reaction Time Test"
+        },
+        {
+            "type": "youtube",
+            "link": "https://youtu.be/OJcE6lRTipM",
+            "description": "How to react faster in any game. - Viscose"
+        }
+    ],
+    "pop_flashes": [
+        {
+            "type": "youtube",
+            "link": "https://www.youtube.com/watch?v=i59BlyMzBHE",
+            "description": "The Ultimate CS2 Flashbang Guide (With Zero Lineups) - WilsonCS2"
+        },
+        {
+            "type": "youtube",
+            "link": "https://www.youtube.com/watch?v=4gXJbaWW4IE",
+            "description": "5 Self Pop Flashes For EVERY MAP in CS2 - CS2 Kitchen"
+        }
+    ],
+    "flash_timing": [
+        {
+            "type": "youtube",
+            "link": "https://www.youtube.com/watch?v=i59BlyMzBHE",
+            "description": "The Ultimate CS2 Flashbang Guide (With Zero Lineups) - WilsonCS2"
+        }
+    ],
+    "flash_buying": [
+        {
+            "type": "youtube",
+            "link": "https://www.youtube.com/watch?v=mTCEdbskhjE",
+            "description": "The Ultimate CS2 Economy Guide... - kneel"
+        }
+    ],
+    "he_grenades": [
+        {
+            "type": "youtube",
+            "link": "https://youtu.be/BheZruGbYbQ",
+            "description": "The Ultimate CS2 Utility Guide... - kneel"
+        }
+    ],
+    "utility_timing": [
+        {
+            "type": "youtube",
+            "link": "https://youtu.be/BheZruGbYbQ",
+            "description": "The Ultimate CS2 Utility Guide... - kneel"
+        }
+    ],
+    "ct_angles": [
+        {
+            "type": "youtube",
+            "link": "https://youtu.be/TOqOttIP0UI",
+            "description": "Holding Angles in CS2 - Explained - Biley"
+        },
+        {
+            "type": "youtube",
+            "link": "https://www.youtube.com/watch?v=SIcsopvENFU",
+            "description": "Should You Hold Angles in CS2? - WilsonCS2"
+        },
+        {
+            "type": "youtube",
+            "link": "https://youtu.be/HfJ9G7RqpNU",
+            "description": "The Ultimate CS2 Positioning Guide… - kneel"
+        }
+    ],
+    "t_entry": [
+        {
+            "type": "youtube",
+            "link": "https://www.youtube.com/watch?v=uE4AoTG3S2E",
+            "description": "The Art of Entry Fragging - Wa Tzu"
+        },
+        {
+            "type": "youtube",
+            "link": "https://youtu.be/qM0IK4mfo6M",
+            "description": "The 7 Levels of Entry Fragger - Ash's Playbook"
+        },
+        {
+            "type": "workshop",
+            "link": "https://steamcommunity.com/sharedfiles/filedetails/?id=3503061782",
+            "description": "PREFIRE MAPS - Workshop Map with common prefire spots for all competitive maps."
+        }
+    ],
+    "shoulder_peeking": [
+        {
+            "type": "youtube",
+            "link": "https://www.youtube.com/watch?v=SIcsopvENFU",
+            "description": "Should You Hold Angles in CS2? - WilsonCS2"
+        },
+        {
+            "type": "youtube",
+            "link": "https://www.youtube.com/watch?v=S_3cHXNOt8I",
+            "description": "The GREATEST CS2 Peeking Guide OF ALL TIME - Biley"
+        },
+        {
+            "type": "youtube",
+            "link": "https://www.youtube.com/watch?v=sQlkIYmQgK8",
+            "description": "The ONLY Peek Guide You'll EVER Need… - kneel"
+        }
+    ],
+    "trade_positioning": [
+        {
+            "type": "youtube",
+            "link": "https://youtu.be/HfJ9G7RqpNU",
+            "description": "The Ultimate CS2 Positioning Guide… - kneel"
+        }
+    ],
+    "clutch_fundamentals": [
+        {
+            "type": "youtube",
+            "link": "https://youtu.be/QMflvZlo3hc",
+            "description": "Top 0.01% CS2 Player Shares His Clutching Secrets - Biley"
+        },
+        {
+            "type": "youtube",
+            "link": "https://youtu.be/SNNUqEV8HPk",
+            "description": "How To Win More Clutches in CS2 - ukko"
+        }
+    ],
+    "1v1_clutch": [
+        {
+            "type": "youtube",
+            "link": "https://youtu.be/QMflvZlo3hc",
+            "description": "Top 0.01% CS2 Player Shares His Clutching Secrets - Biley"
+        },
+        {
+            "type": "youtube",
+            "link": "https://youtu.be/SNNUqEV8HPk",
+            "description": "How To Win More Clutches in CS2 - ukko"
+        }
+    ],
+    "ct_positioning": [
+        {
+            "type": "youtube",
+            "link": "https://youtu.be/HfJ9G7RqpNU",
+            "description": "The Ultimate CS2 Positioning Guide… - kneel"
+        },
+        {
+            "type": "youtube",
+            "link": "https://www.youtube.com/watch?v=sJfZqeLdHk4",
+            "description": "How to Hold Sites on CT Side - CS:GO Guide"
+        }
+    ],
+    "t_positioning": [
+        {
+            "type": "youtube",
+            "link": "https://www.youtube.com/watch?v=uE4AoTG3S2E",
+            "description": "The Art of Entry Fragging - Wa Tzu"
+        },
+        {
+            "type": "youtube",
+            "link": "https://youtu.be/qM0IK4mfo6M",
+            "description": "The 7 Levels of Entry Fragger - Ash's Playbook"
+        }
+    ],
+    "ct_utility": [ 
+        {
+            "type": "youtube",
+            "link": "https://www.youtube.com/watch?v=cGzX7yl1gRo",
+            "description": "CT Side Utility Usage Guide - CS2"
+        },
+        {
+            "type": "youtube",
+            "link": "https://www.youtube.com/watch?v=4gXJbaWW4IE",
+            "description": "5 Self Pop Flashes For EVERY MAP in CS2 - CS2 Kitchen"
+        },   
+        {
+            "type": "youtube",
+            "link": "https://youtu.be/BheZruGbYbQ",
+            "description": "The Ultimate CS2 Utility Guide… - kneel"
+        }
+    ],
+    "t_utility": [
+        {
+            "type": "youtube",
+            "link": "https://youtu.be/BheZruGbYbQ",
+            "description": "The Ultimate CS2 Utility Guide… - kneel"
+        },
+        {
+            "type": "youtube",
+            "link": "https://www.youtube.com/watch?v=4gXJbaWW4IE",
+            "description": "5 Self Pop Flashes For EVERY MAP in CS2 - CS2 Kitchen"
+        }
+    ],
+    "clutch_utility": [
+        {
+            "type": "youtube",
+            "link": "https://www.youtube.com/watch?v=l8-vZmvxYD4",
+            "description": "How to Use Utility in Clutch Situations - CS2"
+        },
+        {
+            "type": "youtube",
+            "link": "https://youtu.be/QMflvZlo3hc",
+            "description": "Top 0.01% CS2 Player Shares His Clutching Secrets - Biley"
+        }
+    ],
+    "ct_fundamentals": [
+        {
+            "type": "youtube",
+            "link": "https://www.youtube.com/watch?v=sJfZqeLdHk4",
+            "description": "How to Hold Sites on CT Side - CS:GO Guide"
+        },
+            {
+            "type": "youtube",
+            "link": "https://youtu.be/HfJ9G7RqpNU",
+            "description": "The Ultimate CS2 Positioning Guide… - kneel"
+        }
+    ],
+    "t_fundamentals": [
+        {
+            "type": "youtube",
+            "link": "https://www.youtube.com/watch?v=uE4AoTG3S2E",
+            "description": "The Art of Entry Fragging - Wa Tzu"
+        },
+        {
+            "type": "youtube",
+            "link": "https://youtu.be/qM0IK4mfo6M",
+            "description": "The 7 Levels of Entry Fragger - Ash's Playbook"
+        }
+    ],
+    "demo_review": [],
+    "communication": [],
+    "entry_fragger": [
+        {
+            "type": "youtube",
+            "link": "https://www.youtube.com/watch?v=uE4AoTG3S2E",
+            "description": "The Art of Entry Fragging - Wa Tzu"
+        }
+    ]
+}

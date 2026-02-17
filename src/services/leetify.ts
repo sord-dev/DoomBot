@@ -1,5 +1,6 @@
 import axios, { AxiosInstance, AxiosResponse } from 'axios';
 import { logger } from '../utils/logger';
+import { normalizeToDecimal, formatAsPercentage, type ApiEndpoint } from '../utils/dataFormatter';
 
 export interface LeetifyPlayerProfile {
   steamId: string;
@@ -217,8 +218,8 @@ class LeetifyApiService {
     try {
       // Get both profile and recent matches for comprehensive stats
       const [profileResponse, matchesResponse] = await Promise.all([
-        this.api.get('/v3/profile', { params: { id: steamId } }),
-        this.api.get('/v3/profile/matches', { params: { id: steamId } })
+        this.api.get('/v3/profile', { params: { steam64_id: steamId } }),
+        this.api.get('/v3/profile/matches', { params: { steam64_id: steamId } })
       ]);
       
       return this.transformPlayerProfile(profileResponse.data, matchesResponse.data || [], steamId);
@@ -233,7 +234,7 @@ class LeetifyApiService {
 
     try {
       const response: AxiosResponse = await this.api.get('/v3/profile/matches', {
-        params: { id: steamId }
+        params: { steam64_id: steamId }
       });
       
       const matches = (response.data || []).slice(0, limit).map((match: any) => 
@@ -311,26 +312,26 @@ class LeetifyApiService {
       profileImageUrl: profileData.profileImageUrl,
       skillLevel: profileData.ranks?.leetify || 0,
       gamesCount: profileData.total_matches || 0,
-      winRate: (profileData.winrate || 0) * 100, // Convert decimal to percentage
+      winRate: normalizeToDecimal(profileData.winrate || 0, 'winrate', 'profile'), // Keep as decimal internally
       averageRating: profileData.ranks?.leetify || 0, // This is the main Leetify rating
       killDeathRatio: matchCount > 0 && totalDeaths > 0 ? +(totalKills / totalDeaths).toFixed(2) : 0,
-      headshotPercentage: matchCount > 0 && totalKills > 0 ? +((totalHeadshotKills / totalKills) * 100).toFixed(1) : 0,
+      headshotPercentage: matchCount > 0 && totalKills > 0 ? +((totalHeadshotKills / totalKills)).toFixed(3) : 0, // Keep as decimal
       damagePerRound: matchCount > 0 && totalRounds > 0 ? +(totalDamage / totalRounds).toFixed(1) : 0,
       averageKillsPerRound: matchCount > 0 && totalRounds > 0 ? +(totalKills / totalRounds).toFixed(2) : 0,
       averageDeathsPerRound: matchCount > 0 && totalRounds > 0 ? +(totalDeaths / totalRounds).toFixed(2) : 0,
       averageAssistsPerRound: matchCount > 0 && totalRounds > 0 ? +(totalAssists / totalRounds).toFixed(2) : 0,
-      clutchRate: (profileData.rating?.clutch || 0) * 100, // Convert decimal to percentage
-      firstKillRate: (profileData.rating?.opening || 0) * 100, // Convert decimal to percentage
-      multiKillRate: matchCount > 0 && totalRounds > 0 ? +((totalMultiKills / totalRounds) * 100).toFixed(1) : 0,
+      clutchRate: normalizeToDecimal(profileData.rating?.clutch || 0, 'clutch', 'profile'), // Keep as decimal
+      firstKillRate: normalizeToDecimal(profileData.rating?.opening || 0, 'opening', 'profile'), // Keep as decimal
+      multiKillRate: matchCount > 0 && totalRounds > 0 ? +((totalMultiKills / totalRounds)).toFixed(3) : 0, // Keep as decimal
       utilityDamage: profileData.stats?.he_foes_damage_avg || 0,
       flashAssists: profileData.stats?.flashbang_thrown || 0,
       smokeSuccessRate: 0,
-      entryKillRate: (profileData.rating?.opening || 0) * 100, // Convert decimal to percentage
-      tradeKillRate: profileData.stats?.trade_kills_success_percentage || 0,
-      survivalRate: matchCount > 0 && totalRounds > 0 ? +((totalSurvived / totalRounds) * 100).toFixed(1) : 0,
-      roundsWithKill: matchCount > 0 && totalRounds > 0 ? +((totalKills > 0 ? totalRounds - (totalRounds - totalKills) : 0) / totalRounds * 100).toFixed(1) : 0,
-      roundsWithMultiKill: matchCount > 0 && totalRounds > 0 ? +((totalMultiKills / totalRounds) * 100).toFixed(1) : 0,
-      roundsWithClutch: (profileData.rating?.clutch || 0) * 100, // Convert decimal to percentage
+      entryKillRate: normalizeToDecimal(profileData.rating?.opening || 0, 'opening', 'profile'), // Keep as decimal
+      tradeKillRate: normalizeToDecimal(profileData.stats?.trade_kills_success_percentage || 0, 'trade_kills_success_percentage', 'profile'),
+      survivalRate: matchCount > 0 && totalRounds > 0 ? +((totalSurvived / totalRounds)).toFixed(3) : 0, // Keep as decimal
+      roundsWithKill: matchCount > 0 && totalRounds > 0 ? +((totalKills > 0 ? totalRounds - (totalRounds - totalKills) : 0) / totalRounds).toFixed(3) : 0, // Keep as decimal
+      roundsWithMultiKill: matchCount > 0 && totalRounds > 0 ? +((totalMultiKills / totalRounds)).toFixed(3) : 0, // Keep as decimal
+      roundsWithClutch: normalizeToDecimal(profileData.rating?.clutch || 0, 'clutch', 'profile'), // Keep as decimal
       lastUpdated: profileData.last_updated || new Date().toISOString()
     };
   }
@@ -380,7 +381,7 @@ class LeetifyApiService {
       assists: playerStats?.total_assists || 0,
       adr: playerStats?.dpr || 0, // damage per round
       headshots: playerStats?.total_hs_kills || 0,
-      headshotPercentage: playerStats?.total_kills > 0 ? (playerStats?.total_hs_kills || 0) / playerStats.total_kills * 100 : 0,
+      headshotPercentage: playerStats?.total_kills > 0 ? (playerStats?.total_hs_kills || 0) / playerStats.total_kills : 0, // Keep as decimal
       firstKills: playerStats?.multi1k || 0,
       firstDeaths: 0, // Not available in this API structure
       clutchesWon: playerStats?.rounds_survived || 0,

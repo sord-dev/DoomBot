@@ -123,10 +123,10 @@ async function createStatsEmbed(profile: LeetifyPlayerProfile): Promise<EmbedBui
   const kdGrade = gradeKillDeathRatio(profile.killDeathRatio);
   const adrGrade = gradeDamagePerRound(profile.damagePerRound);
   const hsGrade = gradeHeadshotPercentage(profile.headshotPercentage);
-  const winGrade = gradeWinRate(profile.winRate / 100); // Convert back to decimal for grading
+  const winGrade = gradeWinRate(profile.winRate); // Data is now decimal internally
   const ratingGrade = gradeAverageRating(profile.averageRating);
-  const firstKillGrade = gradeFirstKillRate(profile.firstKillRate / 100); // Convert back to decimal for grading
-  const clutchGrade = gradeClutchRate(profile.clutchRate / 100); // Convert back to decimal for grading
+  const firstKillGrade = gradeFirstKillRate(profile.firstKillRate); // Data is now decimal internally
+  const clutchGrade = gradeClutchRate(profile.clutchRate); // Data is now decimal internally
 
   // Calculate overall grade including all key stats
   const overallGrade = calculateOverallGrade({
