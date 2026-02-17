@@ -176,6 +176,11 @@
     "t_positioning": [
         {
             "type": "youtube",
+            "link": "https://www.youtube.com/watch?v=cghEfjhv6h8",
+            "description": "How to Play Postplants in CS2 - Pol0"
+        },
+        {
+            "type": "youtube",
             "link": "https://www.youtube.com/watch?v=uE4AoTG3S2E",
             "description": "The Art of Entry Fragging - Wa Tzu"
         },
