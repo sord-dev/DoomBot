@@ -170,14 +170,16 @@ async function createRecentMatchesEmbed(matches: LeetifyMatchSummary[], steamId:
     const kdRatio = (match.kills / Math.max(match.deaths, 1)).toFixed(1);
     const matchDate = new Date(match.matchDate).toLocaleDateString();
     
-    const ratingColor = getRatingColor(match.rating);
+    // Use leetify_rating directly for display
+    const leetifyRating = match.rating; // This is already the leetify_rating from the API
+    const ratingColor = getRatingColor(leetifyRating);
     
     return {
       name: `${resultEmoji} **Match ${index + 1}** - ${match.mapName}`,
       value: 
         `**Score:** ${match.playerScore}-${match.opponentScore}\n` +
         `**K/D/A:** ${match.kills}/${match.deaths}/${match.assists} (${kdRatio})\n` +
-        `**Rating:** ${ratingColor} ${match.rating.toFixed(2)}\n` +
+        `**Leetify Rating:** ${ratingColor} ${leetifyRating.toFixed(2)}\n` +
         `**ADR:** ${match.adr.toFixed(0)} • **HS%:** ${match.headshotPercentage.toFixed(0)}%\n` +
         `**Date:** ${matchDate}`,
       inline: true

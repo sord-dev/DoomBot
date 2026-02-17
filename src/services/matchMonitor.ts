@@ -128,10 +128,12 @@ class MatchMonitorService {
           return false;
         }
         
-        // Must be newer than last processed match
-        if (user.last_match_date) {
+        // Must be newer than last processed match OR have a different matchId but not older
+        if (user.last_match_date && user.last_match_id) {
           const lastMatchTime = new Date(user.last_match_date).getTime();
-          return matchTime > lastMatchTime || match.matchId !== user.last_match_id;
+          // Only include if: newer timestamp OR same timestamp but different matchId
+          return matchTime > lastMatchTime || 
+                 (matchTime === lastMatchTime && match.matchId !== user.last_match_id);
         }
         
         return true;
@@ -204,7 +206,8 @@ class MatchMonitorService {
     const kdRatio = match.kills / Math.max(match.deaths, 1);
     const kdGrade = gradeKillDeathRatio(kdRatio);
     const adrGrade = gradeDamagePerRound(match.adr);
-    const ratingGrade = gradeAverageRating(match.rating);
+    const leetifyRating = match.rating; // This is the leetify_rating from the API
+    const ratingGrade = gradeAverageRating(leetifyRating);
     
     // Calculate additional stats
     const entryFragRate = match.firstKills > 0 ? (match.firstKills / Math.max(match.matchDurationMinutes, 1) * 100) : 0;
@@ -226,7 +229,7 @@ class MatchMonitorService {
     
     // Performance indicators
     const indicators = [];
-    if (match.rating >= 1.20) indicators.push('🔥 Hot Performance');
+    if (leetifyRating >= 1.20) indicators.push('🔥 Hot Performance');
     if (kdRatio >= 1.5) indicators.push('⚔️ High Fragging');
     if (match.firstKills >= 3) indicators.push('🎯 Entry Master');
     if (match.clutchesWon >= 2) indicators.push('🏆 Clutch King');
@@ -244,7 +247,7 @@ class MatchMonitorService {
           name: '🎯 **Core Performance**',
           value: 
             `**K/D/A:** ${match.kills}/${match.deaths}/${match.assists} (${kdRatio.toFixed(2)})\n` +
-            `**Rating:** ${formatGradedStat(ratingGrade, 'Rating')}\n` +
+            `**Leetify Rating:** ${formatGradedStat(ratingGrade, 'Rating')}\n` +
             `**ADR:** ${formatGradedStat(adrGrade, 'ADR')}\n` +
             `**HS%:** ${match.headshotPercentage.toFixed(0)}%`,
           inline: true

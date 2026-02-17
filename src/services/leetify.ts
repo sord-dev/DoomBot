@@ -429,6 +429,22 @@ class LeetifyApiService {
     };
   }
 
+
+  // Returns raw profile data without transformation
+  // used by /improve to access rating + stats sub-metrics directly
+  async getRawProfile(steamId: string): Promise<any> {
+    await this.rateLimiter();
+    try {
+      const response: AxiosResponse = await this.api.get("/v3/profile", {
+        params: { steam64_id: steamId }
+      });
+      return response.data;
+    } catch (error) {
+      logger.error(`Failed to fetch raw profile for ${steamId}:`, error);
+      throw error;
+    }
+  }
+
   // Health check method
   async healthCheck(): Promise<boolean> {
     try {
