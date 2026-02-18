@@ -24,7 +24,9 @@ const API_FIELD_FORMATS = {
       'flashbang_thrown',      // Raw values
       'trade_kill_opportunities_per_round', // Raw values
       'flashbang_hit_foe_per_flashbang',   // Raw count: enemies per flash
-      'flashbang_hit_friend_per_flashbang' // Raw count: teammates per flash
+      'flashbang_hit_friend_per_flashbang', // Raw count: teammates per flash
+      'clutch',    // Relative rating value like +9.61
+      'opening'    // Relative rating value like +4.38
     ],
     percentage_fields: [
       'accuracy_enemy_spotted',
@@ -119,16 +121,22 @@ export function formatApiValueAsPercentage(
  * All internal logic should use these decimal values
  */
 export const BENCHMARK_DECIMALS = {
-  // Rating thresholds - these are decimal ratings (0.0-1.0)
+  // Mixed rating system based on Premier 15k-19k actual averages
   ratings: {
-    poor: 0.35,
-    below_avg: 0.45, 
-    average: 0.60,
-    aim: 0.45,
-    positioning: 0.45,
-    utility: 0.45,
-    clutch: 0.35,
-    opening: 0.25,
+    // 0-100 scale ratings (aim, utility, positioning)
+    poor_100: 35,
+    below_avg_100: 45, 
+    average_100: 60,
+    aim: 66,          // 0-100 scale (Premier 15k-19k: 66)
+    positioning: 53,   // 0-100 scale (Premier 15k-19k: 53)
+    utility: 58,      // 0-100 scale (Premier 15k-19k: 58)
+    
+    // Relative scale ratings (clutch, opening) - using proper display scale
+    poor_rel: -6.0,   // Poor relative performance 
+    below_avg_rel: -2.0, // Below average relative
+    average_rel: 3.0,    // Average relative 
+    clutch: 10.49,    // Relative rating (Premier 15k-19k: +10.49)
+    opening: 0.01,    // Relative rating (Premier 15k-19k: +0.01)
   },
   // Performance metrics as decimals (0.0-1.0)
   stats: {
@@ -161,6 +169,118 @@ export const BENCHMARK_DECIMALS = {
  * Compare an API value against a benchmark with proper normalization
  * Returns true if the value meets or exceeds the benchmark
  */
+/**
+ * Format a Leetify relative rating for display
+ * These are skill-bracket-relative values like +9.61, -2.14, not percentages
+ */
+export function formatLeetifyRating(rating: number): string {
+  const sign = rating >= 0 ? '+' : '';
+  return `${sign}${rating.toFixed(2)}`;
+}
+
+/**
+ * Determine performance level for Leetify relative ratings
+ * Based on typical Leetify relative value ranges
+ */
+export function getLeetifyRatingLevel(rating: number): {
+  level: 'Excellent' | 'Good' | 'Average' | 'Below Average' | 'Poor';
+  color: string;
+  emoji: string;
+} {
+  if (rating >= 8.0) return { level: 'Excellent', color: '🟢', emoji: '🔥' };
+  if (rating >= 3.0) return { level: 'Good', color: '🟢', emoji: '✨' };
+  if (rating >= -2.0) return { level: 'Average', color: '🟡', emoji: '👍' };
+  if (rating >= -6.0) return { level: 'Below Average', color: '🟠', emoji: '👎' };
+  return { level: 'Poor', color: '🔴', emoji: '💀' };
+}
+
+/**
+ * Get performance level and improvement suggestion based on benchmark comparison
+ */
+export function getBenchmarkComparison(
+  apiValue: number,
+  fieldName: string,
+  sourceApi: ApiEndpoint = 'profile'
+): {
+  meetsbenchmark: boolean;
+  performance: 'Excellent' | 'Good' | 'Average' | 'Below Average' | 'Poor';
+  improvementNeeded: 'None' | 'Minor' | 'Moderate' | 'Major';
+  percentageAboveBenchmark: number;
+} {
+  const benchmark = BENCHMARK_DECIMALS.stats[fieldName as keyof typeof BENCHMARK_DECIMALS.stats];
+  if (benchmark === undefined) {
+    return {
+      meetsbenchmark: true,
+      performance: 'Average',
+      improvementNeeded: 'None',
+      percentageAboveBenchmark: 0
+    };
+  }
+
+  const normalizedValue = normalizeToDecimal(apiValue, fieldName, sourceApi);
+  
+  // Handle inverted metrics (lower is better)
+  const isInvertedMetric = fieldName === 'reaction_time_ms' || 
+                          fieldName === 'he_friends_damage_avg' ||
+                          fieldName === 'utility_on_death_avg';
+  
+  let meetsbenchmark: boolean;
+  let percentageAboveBenchmark: number;
+  
+  if (isInvertedMetric) {
+    meetsbenchmark = normalizedValue <= benchmark;
+    percentageAboveBenchmark = ((benchmark - normalizedValue) / benchmark) * 100;
+  } else {
+    meetsbenchmark = normalizedValue >= benchmark;
+    percentageAboveBenchmark = ((normalizedValue - benchmark) / benchmark) * 100;
+  }
+
+  // Determine performance level based on how far above/below benchmark
+  let performance: 'Excellent' | 'Good' | 'Average' | 'Below Average' | 'Poor';
+  let improvementNeeded: 'None' | 'Minor' | 'Moderate' | 'Major';
+
+  if (percentageAboveBenchmark >= 30) {
+    performance = 'Excellent';
+    improvementNeeded = 'None';
+  } else if (percentageAboveBenchmark >= 10) {
+    performance = 'Good';
+    improvementNeeded = 'None';
+  } else if (percentageAboveBenchmark >= -5) {
+    performance = 'Average';
+    improvementNeeded = 'Minor';
+  } else if (percentageAboveBenchmark >= -20) {
+    performance = 'Below Average';
+    improvementNeeded = 'Moderate';
+  } else {
+    performance = 'Poor';
+    improvementNeeded = 'Major';
+  }
+
+  return {
+    meetsbenchmark,
+    performance,
+    improvementNeeded,
+    percentageAboveBenchmark: Math.round(percentageAboveBenchmark * 10) / 10
+  };
+}
+
+/**
+ * Generate trend emoji based on benchmark performance
+ */
+export function getTrendEmoji(
+  currentValue: number,
+  fieldName: string,
+  sourceApi: ApiEndpoint = 'profile'
+): string {
+  const comparison = getBenchmarkComparison(currentValue, fieldName, sourceApi);
+  
+  if (comparison.performance === 'Excellent') return '🔥';
+  if (comparison.performance === 'Good') return '✨';
+  if (comparison.performance === 'Average') return '👍';
+  if (comparison.performance === 'Below Average') return '👎';
+  return '💀';
+}
+
 export function compareAgainstBenchmark(
   apiValue: number,
   fieldName: string, 
