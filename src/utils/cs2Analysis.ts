@@ -8,6 +8,7 @@ import {
   formatApiValueAsPercentage, 
   compareAgainstBenchmark,
   BENCHMARK_DECIMALS,
+  getBenchmarkTier,
   formatLeetifyRating,
   getLeetifyRatingLevel,
 } from './dataFormatter';
@@ -26,55 +27,55 @@ const resources = resourceData as Record<string, Resource[]>;
 
 // ─── advice engine ───────────────────────────────────────────────────────────
 
-export function analyseAim(stats: RawLeetifyProfile['stats'], rating: number): ImprovementArea {
+export function analyseAim(stats: RawLeetifyProfile['stats'], rating: number, benchmarkTier: any): ImprovementArea {
   const issues: string[] = [];
   const drills: string[] = [];
   const resourceTags: string[] = [];
 
-  if (!compareAgainstBenchmark(stats.accuracy_enemy_spotted, 'accuracy_enemy_spotted', 'profile')) {
+  if (!compareAgainstBenchmark(stats.accuracy_enemy_spotted, 'accuracy_enemy_spotted', 'profile', benchmarkTier)) {
     issues.push(`Low accuracy when enemy spotted (${formatApiValueAsPercentage(stats.accuracy_enemy_spotted, 'accuracy_enemy_spotted', 'profile')} — aim for 18%+)`);
     drills.push('aim_botz — 100 kills at close/medium range daily, focus on crosshair placement not speed');
     resourceTags.push('aim_accuracy');
   }
 
   // headshot accuracy — compound check with overall accuracy
-  if (compareAgainstBenchmark(stats.accuracy_enemy_spotted, 'accuracy_enemy_spotted', 'profile')
-      && !compareAgainstBenchmark(stats.accuracy_head, 'accuracy_head', 'profile')) {
+  if (compareAgainstBenchmark(stats.accuracy_enemy_spotted, 'accuracy_enemy_spotted', 'profile', benchmarkTier)
+      && !compareAgainstBenchmark(stats.accuracy_head, 'accuracy_head', 'profile', benchmarkTier)) {
     issues.push(`You hit your shots but aim body too often (${formatApiValueAsPercentage(stats.accuracy_head, 'accuracy_head', 'profile')} headshots)`);
     drills.push('Your accuracy is fine — the problem is crosshair placement. Focus on keeping crosshair at head height at all times');
     resourceTags.push('crosshair_placement');
-  } else if (!compareAgainstBenchmark(stats.accuracy_head, 'accuracy_head', 'profile')) {
+  } else if (!compareAgainstBenchmark(stats.accuracy_head, 'accuracy_head', 'profile', benchmarkTier)) {
     issues.push(`Low headshot accuracy (${formatApiValueAsPercentage(stats.accuracy_head, 'accuracy_head', 'profile')} — aim for 40%+)`);
     drills.push('Play deathmatch with AK only, force yourself to tap/burst at head level — never spray at body');
     resourceTags.push('crosshair_placement');
   }
 
-  if (!compareAgainstBenchmark(stats.counter_strafing_good_shots_ratio, 'counter_strafing_good_shots_ratio', 'profile')) {
+  if (!compareAgainstBenchmark(stats.counter_strafing_good_shots_ratio, 'counter_strafing_good_shots_ratio', 'profile', benchmarkTier)) {
     issues.push(`You're firing while still moving too often (${formatApiValueAsPercentage(stats.counter_strafing_good_shots_ratio, 'counter_strafing_good_shots_ratio', 'profile')} clean shots)`);
     drills.push('counter_strafing workshop map — only shoot when fully stopped, build the habit before worrying about speed');
     resourceTags.push('counter_strafing');
   }
 
-  if (!compareAgainstBenchmark(stats.spray_accuracy, 'spray_accuracy', 'profile')) {
+  if (!compareAgainstBenchmark(stats.spray_accuracy, 'spray_accuracy', 'profile', benchmarkTier)) {
     issues.push(`Spray control is weak (${formatApiValueAsPercentage(stats.spray_accuracy, 'spray_accuracy', 'profile')} accuracy in sprays)`);
     drills.push('recoil master workshop — learn AK and M4 spray patterns, 15 mins a day for 2 weeks will fix this');
     resourceTags.push('spray_control');
   }
 
-  if (!compareAgainstBenchmark(stats.preaim, 'preaim', 'profile')) {
+  if (!compareAgainstBenchmark(stats.preaim, 'preaim', 'profile', benchmarkTier)) {
     issues.push(`Not pre-aiming common angles (preaim score: ${stats.preaim.toFixed(2)})`);
     drills.push('deathmatch on your most played map — move crosshair to head height on every corner BEFORE you see anyone');
     resourceTags.push('crosshair_placement');
   }
 
-  if (!compareAgainstBenchmark(stats.reaction_time_ms, 'reaction_time_ms', 'profile')) {
+  if (!compareAgainstBenchmark(stats.reaction_time_ms, 'reaction_time_ms', 'profile', benchmarkTier)) {
     issues.push(`Reaction time is slow (${stats.reaction_time_ms.toFixed(0)}ms avg — aim for sub-350ms)`);
     drills.push('aim_botz reflex training — 200 kills, reaction mode. Also check your monitor refresh rate and in-game sensitivity');
     resourceTags.push('reaction_time');
   }
 
   if (issues.length === 0) {
-    const difference = rating - BENCHMARK_DECIMALS.ratings.aim;
+    const difference = rating - benchmarkTier.ratings.aim;
     const performance = difference >= 15 ? 'excellent' : difference >= 5 ? 'good' : 'solid';
     issues.push(`Aim fundamentals are ${performance} (${rating}/100)`);
   }
@@ -301,7 +302,7 @@ export function analyzeCTTSideWeaknesses(
   return { ctInsights, tInsights, ctDrills, tDrills, ctResourceTags, tResourceTags };
 }
 
-export function analysePositioning(stats: RawLeetifyProfile['stats'], rating: number, weakSide?: 'CT' | 'T' | null): ImprovementArea {
+export function analysePositioning(stats: RawLeetifyProfile['stats'], rating: number, weakSide?: 'CT' | 'T' | null, benchmarkTier?: any): ImprovementArea {
   const issues: string[] = [];
   const drills: string[] = [];
   const resourceTags: string[] = [];
@@ -341,7 +342,7 @@ export function analysePositioning(stats: RawLeetifyProfile['stats'], rating: nu
 
   if (issues.length === 0) {
     // Don't flag positioning as an issue if fundamentals are actually solid
-    const difference = rating - BENCHMARK_DECIMALS.ratings.positioning;
+    const difference = rating - benchmarkTier.ratings.positioning;
     const performance = difference >= 15 ? 'excellent' : difference >= 5 ? 'good' : 'solid';
     return {
       category: 'Positioning',
@@ -363,7 +364,7 @@ export function analysePositioning(stats: RawLeetifyProfile['stats'], rating: nu
   };
 }
 
-export function analyseUtility(stats: RawLeetifyProfile['stats'], rating: number): ImprovementArea {
+export function analyseUtility(stats: RawLeetifyProfile['stats'], rating: number, benchmarkTier: any): ImprovementArea {
   const issues: string[] = [];
   const drills: string[] = [];
   const resourceTags: string[] = [];
@@ -429,7 +430,7 @@ export function analyseUtility(stats: RawLeetifyProfile['stats'], rating: number
   }
 
   if (issues.length === 0) {
-    const difference = rating - BENCHMARK_DECIMALS.ratings.utility;
+    const difference = rating - benchmarkTier.ratings.utility;
     const performance = difference >= 15 ? 'excellent' : difference >= 5 ? 'good' : 'solid';
     issues.push(`Utility usage is ${performance} (${rating}/100)`);
   }
@@ -444,13 +445,13 @@ export function analyseUtility(stats: RawLeetifyProfile['stats'], rating: number
   };
 }
 
-export function analyseOpening(stats: RawLeetifyProfile['stats'], rating: number, weakSide?: 'CT' | 'T' | null): ImprovementArea {
+export function analyseOpening(stats: RawLeetifyProfile['stats'], rating: number, weakSide?: 'CT' | 'T' | null, benchmarkTier?: any): ImprovementArea {
   const issues: string[] = [];
   const drills: string[] = [];
   const resourceTags: string[] = [];
 
-  const ctSuccessLow = !compareAgainstBenchmark(stats.ct_opening_aggression_success_rate, 'ct_opening_aggression_success_rate', 'profile');
-  const tSuccessLow = !compareAgainstBenchmark(stats.t_opening_aggression_success_rate, 't_opening_aggression_success_rate', 'profile');
+  const ctSuccessLow = !compareAgainstBenchmark(stats.ct_opening_aggression_success_rate, 'ct_opening_aggression_success_rate', 'profile', benchmarkTier);
+  const tSuccessLow = !compareAgainstBenchmark(stats.t_opening_aggression_success_rate, 't_opening_aggression_success_rate', 'profile', benchmarkTier);
 
   if (ctSuccessLow) {
     if (weakSide === 'CT') {
@@ -478,8 +479,8 @@ export function analyseOpening(stats: RawLeetifyProfile['stats'], rating: number
     resourceTags.push('t_entry', 'demo_review', 't_positioning');
   }
 
-  if (!ctSuccessLow && !tSuccessLow && rating < BENCHMARK_DECIMALS.ratings.opening && rating >= -10.0) {
-    const difference = rating - BENCHMARK_DECIMALS.ratings.opening;
+  if (!ctSuccessLow && !tSuccessLow && rating < benchmarkTier.ratings.opening && rating >= -10.0) {
+    const difference = rating - benchmarkTier.ratings.opening;
     const performance = difference >= 5 ? 'excellent' : difference >= 0 ? 'good' : difference >= -5 ? 'below average' : 'poor';
     issues.push(`Opening rating is ${performance} (${formatLeetifyRating(rating)}) but individual duel success is ok — you may be taking too few opening duels`);
     drills.push('Step up as entry fragger more — if you win duels when you peek, peek more often with utility support');
@@ -505,7 +506,7 @@ export function analyseOpening(stats: RawLeetifyProfile['stats'], rating: number
   };
 }
 
-export function analyseClutch(stats: RawLeetifyProfile['stats'], rating: number): ImprovementArea {
+export function analyseClutch(stats: RawLeetifyProfile['stats'], rating: number, benchmarkTier: any): ImprovementArea {
   const issues: string[] = [];
   const drills: string[] = [];
   const resourceTags: string[] = [];
@@ -524,8 +525,8 @@ export function analyseClutch(stats: RawLeetifyProfile['stats'], rating: number)
     drills.push('Use sound — listen for footsteps and utility before peeking, time is usually on your side');
     drills.push('1v1 clutch tip: fake a site, listen for rotate, retake original site');
     resourceTags.push('clutch_fundamentals', '1v1_clutch');
-  } else if (rating < BENCHMARK_DECIMALS.ratings.clutch) {
-    const difference = rating - BENCHMARK_DECIMALS.ratings.clutch;
+  } else if (rating < benchmarkTier.ratings.clutch) {
+    const difference = rating - benchmarkTier.ratings.clutch;
     const performance = difference >= -2 ? 'slightly below average' : difference >= -5 ? 'below average' : 'poor';
     issues.push(`Clutch performance is ${performance} (${ratingDisplay}) — room for improvement`);
     drills.push('Learn to use the bomb timer — planted bomb forces enemies to commit, buying you time');
@@ -540,7 +541,7 @@ export function analyseClutch(stats: RawLeetifyProfile['stats'], rating: number)
   }
 
   if (issues.length === 0) {
-    const difference = rating - BENCHMARK_DECIMALS.ratings.clutch;
+    const difference = rating - benchmarkTier.ratings.clutch;
     const performance = difference >= 5 ? 'excellent' : difference >= 0 ? 'good' : 'above average';
     issues.push(`Clutch performance is ${performance} (${ratingDisplay})`);
   }
@@ -738,6 +739,10 @@ export function selectTopResources(
 export function buildImprovementReport(rawProfile: RawLeetifyProfile): ImprovementReport {
   const { rating, stats, name } = rawProfile;
 
+  // Get appropriate benchmark tier based on Premier rating
+  const premierRating = rawProfile.ranks?.premier;
+  const benchmarkTier = getBenchmarkTier(premierRating);
+
   // Mixed rating system: aim/utility/positioning use 0-100, clutch/opening use relative values
   const to100 = (v: number) => Math.round(v > 1 ? v : v * 100);
   const ratings = {
@@ -758,11 +763,11 @@ export function buildImprovementReport(rawProfile: RawLeetifyProfile): Improveme
   const sideInsights = analyzeCTTSideWeaknesses(stats, ctRatingRaw, tRatingRaw);
 
   const areas = [
-    analyseAim(stats, ratings.aim),
-    analysePositioning(stats, ratings.positioning, sideBalance.weakSide),
-    analyseUtility(stats, ratings.utility),
-    analyseOpening(stats, ratings.opening, sideBalance.weakSide),
-    analyseClutch(stats, ratings.clutch),
+    analyseAim(stats, ratings.aim, benchmarkTier),
+    analysePositioning(stats, ratings.positioning, sideBalance.weakSide, benchmarkTier),
+    analyseUtility(stats, ratings.utility, benchmarkTier),
+    analyseOpening(stats, ratings.opening, sideBalance.weakSide, benchmarkTier),
+    analyseClutch(stats, ratings.clutch, benchmarkTier),
   ];
 
   // sort by rating ascending — worst first

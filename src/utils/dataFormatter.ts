@@ -117,58 +117,137 @@ export function formatApiValueAsPercentage(
 }
 
 /**
- * Standardized benchmarks in decimal format (0.0-1.0) for consistent comparisons
- * All internal logic should use these decimal values
+ * Tiered benchmarks based on Premier rating brackets
+ * Each tier represents the average performance for that Premier rating range
  */
-export const BENCHMARK_DECIMALS = {
-  // Mixed rating system based on Premier 15k-19k actual averages
-  ratings: {
-    // 0-100 scale ratings (aim, utility, positioning)
-    poor_100: 35,
-    below_avg_100: 45, 
-    average_100: 60,
-    aim: 66,          // 0-100 scale (Premier 15k-19k: 66)
-    positioning: 53,   // 0-100 scale (Premier 15k-19k: 53)
-    utility: 58,      // 0-100 scale (Premier 15k-19k: 58)
-    
-    // Relative scale ratings (clutch, opening) - using proper display scale
-    poor_rel: -6.0,   // Poor relative performance 
-    below_avg_rel: -2.0, // Below average relative
-    average_rel: 3.0,    // Average relative 
-    clutch: 10.49,    // Relative rating (Premier 15k-19k: +10.49)
-    opening: 0.01,    // Relative rating (Premier 15k-19k: +0.01)
+export const PREMIER_BENCHMARKS = {
+  // 15,000-19,999 Premier Rating
+  15000: {
+    ratings: {
+      aim: 66,          
+      positioning: 53,   
+      utility: 58,      
+      clutch: 10.49,    
+      opening: 0.01,    
+    },
+    stats: {
+      accuracy_enemy_spotted: 0.18,
+      counter_strafing_good_shots_ratio: 0.55,  
+      ct_opening_duel_success_percentage: 0.37,
+      t_opening_duel_success_percentage: 0.37,
+      ct_opening_aggression_success_rate: 0.35,
+      t_opening_aggression_success_rate: 0.40,
+      flashbang_hit_foe_per_flashbang: 0.6,
+      flashbang_hit_friend_per_flashbang: 0.4,
+      flashbang_leading_to_kill: 0.2,
+      flashbang_hit_foe_avg_duration: 1.5,
+      flashbang_thrown: 5.0,
+      he_foes_damage_avg: 20.0,
+      he_friends_damage_avg: 2.0,
+      preaim: 0.85,
+      reaction_time_ms: 350.0,
+      spray_accuracy: 0.65,
+      traded_deaths_success_percentage: 0.78,
+      trade_kill_opportunities_per_round: 1.2,
+      trade_kills_success_percentage: 0.75,
+      utility_on_death_avg: 0.3,
+      accuracy_head: 0.40,
+    }
   },
-  // Performance metrics as decimals (0.0-1.0)
-  stats: {
-    accuracy_enemy_spotted: 0.18,
-    counter_strafing_good_shots_ratio: 0.55,  
-    ct_opening_duel_success_percentage: 0.37,
-    t_opening_duel_success_percentage: 0.37,
-    ct_opening_aggression_success_rate: 0.35,
-    t_opening_aggression_success_rate: 0.40,
-    flashbang_hit_foe_per_flashbang: 0.6,
-    flashbang_hit_friend_per_flashbang: 0.4,
-    flashbang_leading_to_kill: 0.15,
-    traded_deaths_success_percentage: 0.45,
-    trade_kills_success_percentage: 0.45,
-    accuracy_head: 0.40,
-    preaim: 0.5,
-    spray_accuracy: 0.35,
-    // Raw value thresholds (not percentages)
-    he_foes_damage_avg: 20,
-    utility_on_death_avg: 200,
-    reaction_time_ms: 350,
-    flashbang_hit_foe_avg_duration: 1.5,
-    flashbang_thrown: 1.0,
-    he_friends_damage_avg: 5,
-    trade_kill_opportunities_per_round: 0.3,
+  // 10,000-14,999 Premier Rating  
+  10000: {
+    ratings: {
+      aim: 58,          
+      positioning: 51,   
+      utility: 55,      
+      clutch: 10.68,    
+      opening: -0.07,   
+    },
+    stats: {
+      accuracy_enemy_spotted: 0.17,
+      counter_strafing_good_shots_ratio: 0.52,  
+      ct_opening_duel_success_percentage: 0.35,
+      t_opening_duel_success_percentage: 0.35,
+      ct_opening_aggression_success_rate: 0.33,
+      t_opening_aggression_success_rate: 0.38,
+      flashbang_hit_foe_per_flashbang: 0.55,
+      flashbang_hit_friend_per_flashbang: 0.45,
+      flashbang_leading_to_kill: 0.18,
+      flashbang_hit_foe_avg_duration: 1.4,
+      flashbang_thrown: 4.5,
+      he_foes_damage_avg: 18.0,
+      he_friends_damage_avg: 2.5,
+      preaim: 0.8,
+      reaction_time_ms: 365.0,
+      spray_accuracy: 0.6,
+      traded_deaths_success_percentage: 0.75,
+      trade_kill_opportunities_per_round: 1.1,
+      trade_kills_success_percentage: 0.72,
+      utility_on_death_avg: 0.35,
+      accuracy_head: 0.38,
+    }
+  },
+  // 5,000-9,999 Premier Rating
+  5000: {
+    ratings: {
+      aim: 48,          
+      positioning: 50,   
+      utility: 51,      
+      clutch: 10.81,    
+      opening: -0.24,   
+    },
+    stats: {
+      accuracy_enemy_spotted: 0.16,
+      counter_strafing_good_shots_ratio: 0.48,  
+      ct_opening_duel_success_percentage: 0.32,
+      t_opening_duel_success_percentage: 0.32,
+      ct_opening_aggression_success_rate: 0.30,
+      t_opening_aggression_success_rate: 0.35,
+      flashbang_hit_foe_per_flashbang: 0.5,
+      flashbang_hit_friend_per_flashbang: 0.5,
+      flashbang_leading_to_kill: 0.16,
+      flashbang_hit_foe_avg_duration: 1.3,
+      flashbang_thrown: 4.0,
+      he_foes_damage_avg: 16.0,
+      he_friends_damage_avg: 3.0,
+      preaim: 0.75,
+      reaction_time_ms: 380.0,
+      spray_accuracy: 0.55,
+      traded_deaths_success_percentage: 0.72,
+      trade_kill_opportunities_per_round: 1.0,
+      trade_kills_success_percentage: 0.68,
+      utility_on_death_avg: 0.4,
+      accuracy_head: 0.35,
+    }
   }
 };
 
 /**
- * Compare an API value against a benchmark with proper normalization
- * Returns true if the value meets or exceeds the benchmark
+ * Get the appropriate benchmark tier based on Premier rating
  */
+export function getBenchmarkTier(premierRating?: number): typeof PREMIER_BENCHMARKS[15000] {
+  if (!premierRating) {
+    return PREMIER_BENCHMARKS[10000]; // Default to 10k-15k bracket
+  }
+  
+  if (premierRating >= 15000) {
+    return PREMIER_BENCHMARKS[15000];
+  } else if (premierRating >= 10000) {
+    return PREMIER_BENCHMARKS[10000];
+  } else if (premierRating >= 5000) {
+    return PREMIER_BENCHMARKS[5000];
+  } else {
+    return PREMIER_BENCHMARKS[5000]; // Below 5k uses the 5k-10k benchmarks
+  }
+}
+
+/**
+ * Legacy benchmark object for backward compatibility
+ * Now dynamically uses 10k-15k bracket as default
+ */
+export const BENCHMARK_DECIMALS = PREMIER_BENCHMARKS[10000];
+
+
 /**
  * Format a Leetify relative rating for display
  * These are skill-bracket-relative values like +9.61, -2.14, not percentages
@@ -284,9 +363,11 @@ export function getTrendEmoji(
 export function compareAgainstBenchmark(
   apiValue: number,
   fieldName: string, 
-  sourceApi: ApiEndpoint = 'profile'
+  sourceApi: ApiEndpoint = 'profile',
+  benchmarkTier?: typeof PREMIER_BENCHMARKS[15000]
 ): boolean {
-  const benchmark = BENCHMARK_DECIMALS.stats[fieldName as keyof typeof BENCHMARK_DECIMALS.stats];
+  const benchmarks = benchmarkTier || BENCHMARK_DECIMALS;
+  const benchmark = benchmarks.stats[fieldName as keyof typeof benchmarks.stats];
   if (benchmark === undefined) {
     return true; // No benchmark defined, assume OK
   }

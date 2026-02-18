@@ -6,6 +6,7 @@
 import { EmbedBuilder } from 'discord.js';
 import { 
   BENCHMARK_DECIMALS,
+  getBenchmarkTier,
   formatLeetifyRating,
   getLeetifyRatingLevel,
 } from './dataFormatter';
@@ -25,8 +26,11 @@ import type {
 export function getRatingTrend(
   currentValue: number, 
   category: string,
-  isRelativeRating: boolean = false
+  isRelativeRating: boolean = false,
+  benchmarkTier?: any
 ): { emoji: string; trendText: string } {
+  const benchmarks = benchmarkTier || BENCHMARK_DECIMALS;
+  
   if (isRelativeRating) {
     // For clutch/opening relative ratings - use existing logic
     let benchmarkKey: 'clutch' | 'opening';
@@ -39,7 +43,7 @@ export function getRatingTrend(
       benchmarkKey = category.toLowerCase() as 'clutch' | 'opening';
     }
     
-    const benchmark = BENCHMARK_DECIMALS.ratings[benchmarkKey];
+    const benchmark = benchmarks.ratings[benchmarkKey];
     const difference = currentValue - benchmark;
     
     // For relative ratings, don't calculate percentages - they're meaningless near zero
@@ -67,7 +71,7 @@ export function getRatingTrend(
   } else {
     // For 0-100 ratings, calculate difference from benchmark
     const benchmarkKey = category.toLowerCase() as 'aim' | 'positioning' | 'utility';
-    const benchmark = BENCHMARK_DECIMALS.ratings[benchmarkKey];
+    const benchmark = benchmarks.ratings[benchmarkKey];
     const difference = currentValue - benchmark;
     const percentDiff = Math.round((Math.abs(difference) / benchmark) * 100);
     
@@ -93,6 +97,10 @@ export function buildImprovementEmbed(
   rawProfile: RawLeetifyProfile
 ): EmbedBuilder {
   const { focusAreas, areas, playerName, sideBalance, crossInsights, sideInsights } = report;
+
+  // Get appropriate benchmark tier for this player
+  const premierRating = rawProfile.ranks?.premier;
+  const benchmarkTier = getBenchmarkTier(premierRating);
 
   // color based on how bad the worst rating is (need to handle mixed rating scales)
   const worstArea = areas[0]; // Already sorted by rating ascending
@@ -139,11 +147,11 @@ export function buildImprovementEmbed(
     if (a.category === 'Clutch' || a.category === 'Opening Duels') {
       // Relative ratings
       ratingDisplay = formatLeetifyRating(a.rating);
-      trendInfo = getRatingTrend(a.rating, a.category, true);
+      trendInfo = getRatingTrend(a.rating, a.category, true, benchmarkTier);
     } else {
       // 0-100 ratings
       ratingDisplay = `${Math.round(a.rating)}/100`;
-      trendInfo = getRatingTrend(a.rating, a.category, false);
+      trendInfo = getRatingTrend(a.rating, a.category, false, benchmarkTier);
     }
     
     return `${trendInfo.emoji} **${a.category}**: ${ratingDisplay} ${trendInfo.trendText}`;
